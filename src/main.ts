@@ -55,6 +55,10 @@ async function bootstrap(): Promise<void> {
     },
   });
 
+  // Required for onModuleDestroy (PrismaService.$disconnect) to fire on
+  // SIGTERM / SIGINT — e.g. docker stop, Kubernetes pod eviction
+  app.enableShutdownHooks();
+
   const port = config.get<number>('port', 3001);
   await app.listen(port, '0.0.0.0');
 }
