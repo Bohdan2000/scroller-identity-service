@@ -6,7 +6,7 @@ WORKDIR /app
 # Prisma engine requires OpenSSL on Alpine (musl-based)
 RUN apk add --no-cache openssl
 
-COPY package*.json ./
+COPY .npmrc package*.json ./
 COPY prisma/schema.prisma ./prisma/
 
 # Install all deps (including devDeps needed for prisma generate)
@@ -39,7 +39,7 @@ RUN apk add --no-cache openssl
 
 # prisma is in dependencies (not devDependencies) so it's available here for
 # both `prisma generate` and `prisma migrate deploy` at runtime
-COPY package*.json ./
+COPY .npmrc package*.json ./
 COPY prisma ./prisma
 
 RUN npm ci --omit=dev && ./node_modules/.bin/prisma generate
