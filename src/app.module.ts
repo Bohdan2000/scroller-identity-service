@@ -4,6 +4,7 @@ import configuration from './config/configuration';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { HealthModule } from './health/health.module';
       load: [configuration],
       expandVariables: true,
     }),
+    EventsModule,
     PrismaModule,
     AuthModule,
     HealthModule,

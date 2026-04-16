@@ -44,6 +44,7 @@ services:
       APPLE_KEY_ID: ${APPLE_KEY_ID:-}
       APPLE_PRIVATE_KEY: ${APPLE_PRIVATE_KEY:-}
       BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@localhost:5672}
     ports:
       - "${PORT:-3001}:3001"
     healthcheck:

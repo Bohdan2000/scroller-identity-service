@@ -22,4 +22,7 @@ export default () => ({
   bcrypt: {
     rounds: parseInt(process.env.BCRYPT_ROUNDS ?? '12', 10),
   },
+  rabbitmq: {
+    url: process.env.RABBITMQ_URL ?? 'amqp://guest:guest@localhost:5672',
+  },
 });

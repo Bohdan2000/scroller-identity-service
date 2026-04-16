@@ -8,6 +8,7 @@ import { TokensModule } from '../tokens/tokens.module';
 import { SessionsModule } from '../sessions/sessions.module';
 import { DevicesModule } from '../devices/devices.module';
 import { OAuthModule } from '../oauth/oauth.module';
+import { EventsModule } from '../events/events.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OAuthModule } from '../oauth/oauth.module';
     SessionsModule,
     DevicesModule,
     OAuthModule,
+    EventsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],

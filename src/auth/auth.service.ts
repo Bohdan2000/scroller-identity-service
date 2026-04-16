@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { OAuthProvider, User, UserStatus } from '@prisma/client';
@@ -8,6 +8,8 @@ import { TokensService } from '../tokens/tokens.service';
 import { SessionsService } from '../sessions/sessions.service';
 import { DevicesService } from '../devices/devices.service';
 import { OAuthService } from '../oauth/oauth.service';
+import { EventsService } from '../events/events.service';
+import { RoutingKeys } from '../events/events.constants';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { OAuthGoogleDto } from './dto/oauth-google.dto';
@@ -32,8 +34,6 @@ interface DeviceContext {
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly tokens: TokensService,
@@ -41,6 +41,7 @@ export class AuthService {
     private readonly devices: DevicesService,
     private readonly oauth: OAuthService,
     private readonly config: ConfigService,
+    private readonly events: EventsService,
   ) {}
 
   // ─── Public API ─────────────────────────────────────────────────────────────
@@ -63,7 +64,7 @@ export class AuthService {
       },
     });
 
-    this.emitEvent('user.registered', {
+    void this.events.publish(RoutingKeys.USER_REGISTERED, {
       userId: user.id,
       email: user.email,
       createdAt: user.createdAt.toISOString(),
@@ -163,7 +164,7 @@ export class AuthService {
       });
     }
 
-    this.emitEvent('user.session_revoked', {
+    void this.events.publish(RoutingKeys.USER_SESSION_REVOKED, {
       userId: session.userId,
       sessionId: session.id,
     });
@@ -231,7 +232,7 @@ export class AuthService {
           },
         });
 
-        this.emitEvent('user.registered', {
+        void this.events.publish(RoutingKeys.USER_REGISTERED, {
           userId: user.id,
           email: user.email,
           provider,
@@ -298,12 +299,4 @@ export class AuthService {
     };
   }
 
-  /**
-   * Stubs async event emission.
-   * Replace with message broker publish (Kafka / RabbitMQ / SQS) once
-   * the messaging layer is added to the platform.
-   */
-  private emitEvent(event: string, payload: Record<string, unknown>): void {
-    this.logger.debug(`[EVENT] ${event} ${JSON.stringify(payload)}`);
-  }
 }
