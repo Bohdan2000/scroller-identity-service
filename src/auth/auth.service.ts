@@ -114,7 +114,7 @@ export class AuthService {
       deviceId: dto.deviceId ?? ctx.deviceId,
       platform: dto.platform ?? ctx.platform,
       appVersion: dto.appVersion ?? ctx.appVersion,
-    });
+    }, dto.fullName);
   }
 
   async refresh(dto: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -193,6 +193,7 @@ export class AuthService {
     provider: OAuthProvider,
     info: { providerUserId: string; email: string; emailVerified: boolean },
     ctx: DeviceContext,
+    fullName?: { firstName?: string; lastName?: string },
   ): Promise<AuthResponseDto> {
     // 1. Find user by existing OAuth identity
     let user = await this.prisma.user.findFirst({
@@ -213,6 +214,7 @@ export class AuthService {
             provider,
             providerUserId: info.providerUserId,
             providerEmail: info.email,
+            meta: fullName ? { firstName: fullName.firstName, lastName: fullName.lastName } : undefined,
           },
         });
       } else {
@@ -227,6 +229,7 @@ export class AuthService {
                 provider,
                 providerUserId: info.providerUserId,
                 providerEmail: info.email,
+                meta: fullName ? { firstName: fullName.firstName, lastName: fullName.lastName } : undefined,
               },
             },
           },
@@ -236,6 +239,7 @@ export class AuthService {
           userId: user.id,
           email: user.email,
           provider,
+          ...(fullName && { fullName }),
           createdAt: user.createdAt.toISOString(),
         });
       }

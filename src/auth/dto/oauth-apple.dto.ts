@@ -1,5 +1,20 @@
-import { IsString, IsOptional, MaxLength } from 'class-validator';
+import { IsString, IsOptional, MaxLength, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+class AppleFullNameDto {
+  @ApiPropertyOptional({ example: 'John' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  firstName?: string;
+
+  @ApiPropertyOptional({ example: 'Doe' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  lastName?: string;
+}
 
 export class OAuthAppleDto {
   @ApiProperty({
@@ -34,4 +49,13 @@ export class OAuthAppleDto {
   @IsString()
   @MaxLength(50)
   appVersion?: string;
+
+  @ApiPropertyOptional({
+    description: 'Full name from Apple — only sent on the very first authorization',
+    type: () => AppleFullNameDto,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AppleFullNameDto)
+  fullName?: AppleFullNameDto;
 }
