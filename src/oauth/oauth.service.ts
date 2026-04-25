@@ -23,10 +23,12 @@ export class OAuthService {
 
   async verifyGoogleToken(idToken: string): Promise<OAuthUserInfo> {
     try {
-      const ticket = await this.googleClient.verifyIdToken({
-        idToken,
-        audience: this.config.getOrThrow<string>('oauth.google.clientId'),
-      });
+      const webClientId = this.config.getOrThrow<string>('oauth.google.clientId');
+      const iosClientId = this.config.get<string>('oauth.google.iosClientId');
+      const androidClientId = this.config.get<string>('oauth.google.androidClientId');
+      const audience = [webClientId, iosClientId, androidClientId].filter(Boolean) as string[];
+
+      const ticket = await this.googleClient.verifyIdToken({ idToken, audience });
 
       const payload = ticket.getPayload();
 
