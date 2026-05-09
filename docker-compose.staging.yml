@@ -14,8 +14,6 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://identity:identity_secret@postgres:5432/identity_service
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
     ports:
       - "3001:3001"
     networks:
